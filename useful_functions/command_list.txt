@@ -1,0 +1,50 @@
+第一步 --- 切分字体成图片
+需要--sample_dir 名字随意 --sample_count=13300 为收入字体字数
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/衡山毛筆行書.ttf --charset=./fonts/target_exist_char/已有字_6894_草檀斋毛泽东字体.txt --sample_count=6894 --sample_dir=sample_dir --label=0 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/方正祥隶简体.ttf --charset=./fonts/target_exist_char/已有字_6763_方正祥隶简体.txt --sample_count=6763 --sample_dir=sample_dir --label=0 --filter --shuffle --mode=font2font
+
+===============
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/蔡云汉简体行书书法字体.ttf --charset=./fonts/target_exist_char/已有字_6755_蔡云汉简体行书书法字体.txt --sample_count=6755 --sample_dir=sample_dir --label=0 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/方正字迹-邱氏粗瘦金书简体.ttf --charset=./fonts/target_exist_char/已有字_6763_方正字迹-邱氏粗瘦金书简体.txt --sample_count=6763 --sample_dir=sample_dir --label=1 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/方正祥隶简体.ttf --charset=./fonts/target_exist_char/已有字_6763_方正祥隶简体.txt --sample_count=6763 --sample_dir=sample_dir --label=2 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/柳公权柳体.ttf --charset=./fonts/target_exist_char/已有字_6763_柳公权柳体.txt --sample_count=6763 --sample_dir=sample_dir --label=3 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/汉仪瘦金书简.ttf --charset=./fonts/target_exist_char/已有字_6763_汉仪瘦金书简.txt --sample_count=6763 --sample_dir=sample_dir --label=4 --filter --shuffle --mode=font2font
+
+=================
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/书体坊米芾体.ttf --charset=./fonts/target_exist_char/已有字_6763_书体坊米芾体.txt --sample_count=6763 --sample_dir=sample_dir --label=5 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/书体坊邓小平字体.ttf --charset=./fonts/target_exist_char/已有字_7115_书体坊邓小平字体.txt --sample_count=7115 --sample_dir=sample_dir --label=6 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/衡山毛筆行書.ttf --charset=./fonts/target_exist_char/已有字_12204_衡山毛筆行書.txt --sample_count=12204 --sample_dir=sample_dir --label=7 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/书体坊兰亭体.ttf --charset=./fonts/target_exist_char/已有字_13409_书体坊兰亭体.txt --sample_count=13409 --sample_dir=sample_dir --label=8 --filter --shuffle --mode=font2font
+
+python font2img.py --src_font=./fonts/source/仓耳今楷03-W03.ttf --dst_font=./fonts/target/新蒂赵孟頫.ttf --charset=./fonts/target_exist_char/已有字_20932_新蒂赵孟頫.txt --sample_count=20932 --sample_dir=sample_dir --label=9 --filter --shuffle --mode=font2font
+
+
+第二步 --- 打包图片成训练集和测试集
+python package.py --dir=sample_dir --save_dir=binary_save_dir --split_ratio=0.2
+
+第三步 --- 训练
+python train.py --experiment_dir=experiment_dir --gpu_ids=cuda:0 --input_nc=1 --batch_size=25 --epoch=1000 --sample_steps=100 --checkpoint_steps=500
+
+--------- resume
+python train.py --experiment_dir=experiment_dir --resume 7750 --gpu_ids=cuda:0 --input_nc=1 --batch_size=25 --epoch=1000 --sample_steps=100 --checkpoint_steps=500
+
+
+
+第四步 --- Infer
+
+# cpu
+python infer.py --experiment_dir experiment_dir  --batch_size 32 --resume 6000 --from_txt --src_font ./fonts/source/仓耳今楷03-W03.ttf --src_txt 和 --label 0
+
+# gpu
+python infer.py --experiment_dir experiment_dir --gpu_ids cuda:0 --batch_size 32 --resume 90000 --from_txt --src_font ./charset/fonts/zi2zi_source/方正新楷体_GBK(完整).ttf --src_txt 和 --run_all_label
+
+python infer.py --experiment_dir experiment_dir --gpu_ids cuda:0 --batch_size 32 --resume 90000 --from_txt --src_font ./fonts/source/仓耳今楷03-W03.ttf --src_txt 和 --label 0

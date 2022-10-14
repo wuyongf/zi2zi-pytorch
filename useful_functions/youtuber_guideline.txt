@@ -1,0 +1,27 @@
+第一步 切分字体成图片
+需要--sample_dir 名字随意 --sample_count=13300 为收入字体字数
+python font2img.py --src_font=作为底子的字体.ttf --dst_font=目标学习字体.ttf --charset=已有字.txt --sample_count=13300 --sample_dir=sample_dir --label=0 --filter --shuffle --mode=font2font
+第二步打包图片成训练集和测试集
+需要 --dir 为第一步的图片文件夹 --save_dir 新建一个  --split_ratio是切分率 0到1之间 0.2就是20%测试集和80%训练集
+
+python package.py --dir=sample_dir --save_dir=binary_save_dir --split_ratio=0.2
+
+第三步训练 要加--input_nc=1 --experiment_dir 要自己建在根目录下面 把上一步产生的 --save_dir中的东西放在 --experiment_dir\data下
+
+python train.py --experiment_dir=experiment_dir --gpu_ids=cuda:0 --input_nc=1 --batch_size=32 --epoch=1000 --sample_steps=200 --checkpoint_steps=100
+
+恢复训练 如果之前中断了训练
+resume 后加恢复的对应checkpoint数
+
+python train.py --experiment_dir=experiment_dir --resume 35000 --gpu_ids=cuda:0 --input_nc=1 --batch_size=32 --epoch=1000 --sample_steps=200 --checkpoint_steps=1000
+
+这是测试训练结果 --resume写要用的 比如要用 1000_net_D.pth 1000_net_G.pth 就改成1000
+python infer.py --experiment_dir experiment_dir --gpu_ids cuda:0 --batch_size 210 --resume 25000 --from_txt --src_font src.ttf --src_txt 氱氶氻汃汄汅汌汏汑汒汓汖汘汣汥汦汬汮汱汵汷汸汼沀沊沋沎沑沗沝沞沠沯沰沴沵沶沷泀泆泈泋泍泎泏泑泒泘 --label 0
+
+大规模批量生成 注意batch_size大小不要爆显存 我1080发现设置210字还比较合理
+python infer.py --experiment_dir experiment_dir --gpu_ids cuda:0 --batch_size 210 --resume 21000 --from_txt --src_font 作为底子的字体.otf --src_txt 縂椉彞夨葅鳮覌埻乭娭毑狶徆夒洰汿浻凣怹擪媿凢厯丵乊乤乥乧乨乫乬乮乯乲乴乶乷乺乻乼乽亁亃亄亇亗亝亣亪亯亱亴亷亽亾仈仒仚仛仜仢仦仧仯仱仴仸仹仺仾伂伄伅伆伇伌伒伓伔伖伡伩伬伮伳伵伷伿佀佂佄佅佊佋佌佒佡佦佨佪佭佱佲佹侀侅侇侌侎侐侓侕侙侜侞侟侢侤侰侱侳侸侺侻侼侽俀俆俇俈俋俌俒俕俖俢俧俰俲俴俷俹俻俼倃倄倇倊倎倗倝倠倯倰倱倳倵倷倸倽倿偄偅偊偋偑偒偔偘偙偛偝偞偠偢偤偧偨偩偫偮偱偳偹偼傁傂傄傆傇傊傋傎傐傓傗傛傞傟傠傡傤傦傫傮傰傱傶傸傹 --label 1
+
+python infer.py --experiment_dir experiment_dir --gpu_ids cuda:0 --batch_size 210 --resume 21000 --from_txt --src_font 作为底子的字体.otf --src_txt 傼傽傿僀僁僃僄僈僋僐僒僓僗僛僝僟僠僡僢僪僲僶僷僸僺僼僽僿儃儊儌儎儏儑儓儙儜儝儠儢儣儤儥儧儨儩儫儬儭儮儯儰儱儵儶儹儽儾兂兏兓兘兠兦兯兺兾兿冃冋冎冘冞冟冣冭冸冹冺冿凁凂凎凒凔凕凗凙凚凟凥凨凲凷刅刉刌刏刐刜刞刟刡刢刯刱刴刵刾剆剈剒剓剘剙剚剠剢剨剫剬剭剶剸剹剺剻剼劀劅劆劋劎劕劗劘劙劚劤劥劧劮劰劶劷劸劺劽勂勄勆勊勌勎勏勑勓勜勡勨勪勫勬勭勮勯勴勶勼勽匃匄匉匌匎匑匒匓匔匘匛匞匟匢匥匨匩匫匬匰匲匴匵匶匷卂卄卐卙卛卝卥卨卪卭卶卼卾厀厁 --label 2
+
+python infer.py --experiment_dir experiment_dir --gpu_ids cuda:0 --batch_size 210 --resume 21000 --from_txt --src_font 作为底子的字体.otf --src_txt 厃厇厈厊厎厏厐厑厒厔厗厛厜厞厡厤厧厪厬厱厵厸厹厺厼厽叀叄叅叏叐叓叜叞叧叴叾叿吀吇吘吙吚吜吢吤吰吷吺呁呄呅呌呏呚呝呞呠呡呥呧呩呬呭呮呹呺呾咃咅咑咘咞咟咠咮咰咵咶咷哅哛哠哣哤哫哬哰哴哵哶哷哸哻哾唀唃唅唈唊唋唌唍唒唗唘唙唜唟唥唦唨唭唲唴唺唻唽啂啇啈啋啍啎啑啒啔啘啙啚啢啨啳啹啺啽啿喅喌喍喐喒喓喕喖喗喛喠喡喢喣喦喭喯喴喸喿嗁嗂嗃嗈嗋嗏嗕嗘嗛嗠嗢嗭嗴嗸嗺嗼嗿嘂嘃嘄嘇嘊嘋嘑嘒嘓嘕嘙嘝嘨嘪嘳嘺嘼嘾噄噆噈噊噑噒噕噖噞噟噡噣噧噭噮噰噳噵 --label 3
+
